@@ -1,0 +1,5 @@
+# Directory ignores.
+vendor
+
+# File ignores.
+barge
