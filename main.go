@@ -10,7 +10,7 @@ import (
 
 	"github.com/mitchellh/cli"
 
-	"github.com/thedodd/barge/commands"
+	"github.com/thedodd/barge/dev"
 )
 
 // Commands is the mapping of all the available barge commands.
@@ -21,7 +21,7 @@ func init() {
 
 	Commands = map[string]cli.CommandFactory{
 		"dev": func() (cli.Command, error) {
-			return &commands.DevCommand{UI: ui}, nil
+			return &dev.Command{UI: ui}, nil
 		},
 	}
 }
