@@ -1,5 +1,5 @@
-hash: cfc3996533cafa983a277bb624b8e806453042ece90fbab182b268c8a1486be7
-updated: 2016-03-20T20:18:56.506946251-05:00
+hash: 8831a80ee467739dd55579fd02878a8c30c8d2e1576f25546ddf48f8d0d4572f
+updated: 2016-04-03T22:36:56.626527016-05:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
@@ -9,4 +9,6 @@ imports:
   version: 56b76bdf51f7708750eac80fa38b952bb9f32639
 - name: github.com/mitchellh/cli
   version: 5c87c51cedf76a1737bf5ca3979e8644871598a6
+- name: gopkg.in/yaml.v2
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
 devImports: []
