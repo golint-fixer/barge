@@ -13,6 +13,8 @@ import (
 	"github.com/thedodd/barge/dev"
 )
 
+const bargeVersion = "0.0.0"
+
 // Commands is the mapping of all the available barge commands.
 var Commands map[string]cli.CommandFactory
 
@@ -27,7 +29,7 @@ func init() {
 }
 
 func main() {
-	bargeCLI := cli.NewCLI("barge", "0.0.0")
+	bargeCLI := cli.NewCLI("barge", bargeVersion)
 	bargeCLI.Args = os.Args[1:]
 	bargeCLI.Commands = Commands
 
