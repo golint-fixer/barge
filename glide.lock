@@ -1,12 +1,23 @@
-hash: cfc3996533cafa983a277bb624b8e806453042ece90fbab182b268c8a1486be7
-updated: 2016-03-20T20:18:56.506946251-05:00
+hash: 912e18b56e81c2b3fbecf66aa6b396f3100fd096613a8449f0bd707eda4494ee
+updated: 2016-04-14T16:09:22.513169327-05:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
 - name: github.com/bgentry/speakeasy
   version: 36e9cfdd690967f4f690c6edcc9ffacd006014a0
+- name: github.com/hashicorp/hcl
+  version: 27a57f2605e04995c111273c263d51cee60d9bc4
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/token
+  - json/parser
+  - hcl/printer
+  - hcl/scanner
+  - json/scanner
+  - json/token
 - name: github.com/mattn/go-isatty
   version: 56b76bdf51f7708750eac80fa38b952bb9f32639
 - name: github.com/mitchellh/cli
-  version: 5c87c51cedf76a1737bf5ca3979e8644871598a6
+  version: 168daae10d6ff81b8b1201b0a4c9607d7e9b82e3
 devImports: []

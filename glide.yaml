@@ -1,3 +1,4 @@
-package: .
+package: github.com/thedodd/barge
 import:
+- package: github.com/hashicorp/hcl
 - package: github.com/mitchellh/cli
