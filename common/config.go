@@ -50,13 +50,4 @@ func GetConfig() (*map[string]interface{}, error) {
 		return nil, fmt.Errorf("Could not read Bargefile: %s", err)
 	}
 	return rawBargefile, nil
-
-	// // Unmarshal raw map onto struct.
-	// bargefile = &Bargefile{&DevEnvConfig{}}
-	// if err := mapstructure.Decode(rawBargefile, bargefile); err != nil {
-	// 	// TODO(TheDodd): clean up handling of this panic.
-	// 	panic(err.Error())
-	// }
-	//
-	// return bargefile
 }
