@@ -1,8 +1,6 @@
-// dev
-// The idea for this command is that it will provision a docker-machine for
+// dev - the idea for this command is that it will provision a docker-machine for
 // your project based on the name of the project (I.E., repo name) or the
 // project name specified in the config file.
-
 package dev
 
 import (
