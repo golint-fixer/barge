@@ -5,7 +5,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/mitchellh/cli"
@@ -13,17 +12,29 @@ import (
 	"github.com/thedodd/barge/dev"
 )
 
-const bargeVersion = "0.0.0"
+const bargeVersion = "Barge 0.0.0"
 
-// Commands is the mapping of all the available barge commands.
-var Commands map[string]cli.CommandFactory
+var (
+	// Commands is the mapping of all the available barge commands.
+	Commands map[string]cli.CommandFactory
+
+	// UI is the shell frontend used for all output.
+	UI cli.Ui
+)
 
 func init() {
-	ui := &cli.BasicUi{Writer: os.Stdout}
+	baseUI := &cli.BasicUi{Writer: os.Stdout}
+	UI = &cli.ColoredUi{
+		OutputColor: cli.UiColor{Code: 39, Bold: false}, // Default foreground.
+		InfoColor:   cli.UiColor{Code: 39, Bold: false}, // Default foreground.
+		ErrorColor:  cli.UiColor{Code: 91, Bold: true},  // Red foreground.
+		WarnColor:   cli.UiColor{Code: 93, Bold: true},  // Yellow foreground.
+		Ui:          baseUI,
+	}
 
 	Commands = map[string]cli.CommandFactory{
 		"dev": func() (cli.Command, error) {
-			return &dev.Command{UI: ui}, nil
+			return &dev.Command{UI: UI}, nil
 		},
 	}
 }
@@ -35,7 +46,7 @@ func main() {
 
 	exitStatus, err := bargeCLI.Run()
 	if err != nil {
-		log.Println(err)
+		UI.Error(err.Error())
 	}
 
 	os.Exit(exitStatus)

@@ -1,6 +1,3 @@
-// dev - the idea for this command is that it will provision a docker-machine for
-// your project based on the name of the project (I.E., repo name) or the
-// project name specified in the config file.
 package dev
 
 import (
@@ -20,21 +17,22 @@ func (cmd *Command) Help() string {
 	return "Help text for `dev` command."
 }
 
-// Run the `dev` command.
+// Run - the idea for this command is that it will provision a docker-machine for
+// your project based on the Bargefile configuration.
 func (cmd *Command) Run(args []string) int {
 	// Get runtime config from Bargefile.
-	config, err := common.GetConfig()
+	config, err := common.GetConfig(cmd.UI)
 	if err != nil {
 		cmd.UI.Error(err.Error())
 		return 1
 	}
 
-	// fmt.Println(config)
-	fmt.Println(config.Development)
-	cmd.UI.Info(fmt.Sprint(config.Development.Disk))
-	cmd.UI.Info(config.Development.MachineName)
-	cmd.UI.Info(config.Development.Network)
-	cmd.UI.Info(fmt.Sprint(config.Development.RAM))
+	cmd.UI.Warn(fmt.Sprint(config.Development))
+	cmd.UI.Warn(fmt.Sprint(config.Development.Disk))
+	cmd.UI.Warn(config.Development.MachineName)
+	cmd.UI.Warn(config.Development.Network)
+	cmd.UI.Warn(config.Development.Provider)
+	cmd.UI.Warn(fmt.Sprint(config.Development.RAM))
 	return 0
 }
 
