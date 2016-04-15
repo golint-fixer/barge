@@ -14,12 +14,12 @@ import (
 )
 
 var (
-	vldtr          = validator.New(&validator.Config{TagName: "validate"})
+	validate       = validator.New(&validator.Config{TagName: "validate"})
 	validProviders = []string{"virtualbox"}
 )
 
 func init() {
-	vldtr.RegisterValidation("validProvider", validProvider)
+	validate.RegisterValidation("validProvider", validProvider)
 }
 
 // Bargefile - the Bargefile config to drive this CLI.
@@ -64,7 +64,7 @@ func GetConfig(ui cli.Ui) (*Bargefile, error) {
 	}
 
 	// Validate Bargefile.
-	if err := vldtr.Struct(bargefile); err != nil {
+	if err := validate.Struct(bargefile); err != nil {
 		errs, _ := err.(validator.ValidationErrors)
 		handleValidationErrors(ui, bargefile, errs)
 		return nil, errors.New("Errors validating Bargefile.")
@@ -78,7 +78,7 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 		switch fieldError.Tag {
 
 		case "validProvider":
-			ui.Error(fmt.Sprintf("Provider must be one of: %s", validProviders))
+			ui.Error(fmt.Sprintf("Provider must be one of: %s Given value: %s", validProviders, fieldError.Value))
 
 		default:
 			ui.Error(
@@ -95,9 +95,10 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 }
 
 func validProvider(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
+	fmt.Println("Custom validation:", topStruct, currentStructOrField, field, fieldType, fieldKind, param)
 	valid := false
 	for _, val := range validProviders {
-		if param == val {
+		if field.String() == val {
 			valid = true
 		}
 	}
