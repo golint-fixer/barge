@@ -31,12 +31,12 @@ func (cmd *Command) Run(args []string) int {
 		return 1
 	}
 
-	fmt.Println(config)
-	// fmt.Println(config.Development)
-	// cmd.UI.Info(string(config.Development.Disk))
-	// cmd.UI.Info(config.Development.MachineName)
-	// cmd.UI.Info(config.Development.Network)
-	// cmd.UI.Info(string(config.Development.RAM))
+	// fmt.Println(config)
+	fmt.Println(config.Development)
+	cmd.UI.Info(fmt.Sprint(config.Development.Disk))
+	cmd.UI.Info(config.Development.MachineName)
+	cmd.UI.Info(config.Development.Network)
+	cmd.UI.Info(fmt.Sprint(config.Development.RAM))
 	return 0
 }
 

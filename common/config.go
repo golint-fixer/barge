@@ -7,30 +7,24 @@ import (
 	"os"
 
 	"github.com/hashicorp/hcl"
+	"github.com/mitchellh/mapstructure"
 )
-
-var config *map[string]interface{}
 
 // Bargefile - the Bargefile config to drive this CLI.
 type Bargefile struct {
-	Development *DevEnvConfig `mapstructure:"development,squash"`
+	Development *DevEnvConfig `mapstructure:"development"`
 }
 
 // DevEnvConfig barge configuration for the development environment.
 type DevEnvConfig struct {
-	Disk        int    `mapstructure:"disk,squash"`
-	MachineName string `mapstructure:"machineName,squash"`
-	Network     string `mapstructure:"network,squash"`
-	RAM         int    `mapstructure:"ram,squash"`
+	Disk        int    `mapstructure:"disk"`
+	MachineName string `mapstructure:"machineName"`
+	Network     string `mapstructure:"network"`
+	RAM         int    `mapstructure:"ram"`
 }
 
 // GetConfig taken from the local Bargefile. Will panic if Bargefile not found or if there was trouble reading the file.
-func GetConfig() (*map[string]interface{}, error) {
-	// Don't parse config multiple times.
-	if config != nil {
-		return config, nil
-	}
-
+func GetConfig() (*Bargefile, error) {
 	// TODO(TheDodd): make this optional at some point, like the Appfile.
 	// If the Bargefile does not exist, then abort.
 	if _, err := os.Stat("Bargefile"); err != nil {
@@ -45,9 +39,16 @@ func GetConfig() (*map[string]interface{}, error) {
 	}
 
 	// Unmarshal bytes onto raw map.
-	rawBargefile := &map[string]interface{}{}
+	rawBargefile := &map[string]map[string]interface{}{}
 	if err := hcl.Unmarshal(bargeBytes, rawBargefile); err != nil {
 		return nil, fmt.Errorf("Could not read Bargefile: %s", err)
 	}
-	return rawBargefile, nil
+
+	// Map raw Bargefile config onto Bargefile struct.
+	fmt.Println(rawBargefile)
+	bargefile := &Bargefile{&DevEnvConfig{}}
+	if err := mapstructure.Decode(rawBargefile, bargefile); err != nil {
+		return nil, fmt.Errorf("Error processing Bargefile: %s", err)
+	}
+	return bargefile, nil
 }
