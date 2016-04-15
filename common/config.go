@@ -5,12 +5,22 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 
 	"github.com/hashicorp/hcl"
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/go-playground/validator.v8"
 )
+
+var (
+	vldtr          = validator.New(&validator.Config{TagName: "validate"})
+	validProviders = []string{"virtualbox"}
+)
+
+func init() {
+	vldtr.RegisterValidation("validProvider", validProvider)
+}
 
 // Bargefile - the Bargefile config to drive this CLI.
 type Bargefile struct {
@@ -22,7 +32,7 @@ type DevEnvConfig struct {
 	Disk        int    `mapstructure:"disk" validate:"required=true,min=5120"`
 	MachineName string `mapstructure:"machineName" validate:"required=true"`
 	Network     string `mapstructure:"network" validate:"required=true"`
-	Provider    string `mapstructure:"provider" validate:"required=true"`
+	Provider    string `mapstructure:"provider" validate:"required=true,validProvider"`
 	RAM         int    `mapstructure:"ram" validate:"required=true"`
 }
 
@@ -54,7 +64,6 @@ func GetConfig(ui cli.Ui) (*Bargefile, error) {
 	}
 
 	// Validate Bargefile.
-	vldtr := validator.New(&validator.Config{TagName: "validate"})
 	if err := vldtr.Struct(bargefile); err != nil {
 		errs, _ := err.(validator.ValidationErrors)
 		handleValidationErrors(ui, bargefile, errs)
@@ -66,14 +75,31 @@ func GetConfig(ui cli.Ui) (*Bargefile, error) {
 
 func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.ValidationErrors) {
 	for _, fieldError := range errs {
-		ui.Error(
-			fmt.Sprintf(
-				"Validation failed for field '%s' with validator '%s=%s' and value '%s'.",
-				fieldError.NameNamespace,
-				fieldError.Tag,
-				fieldError.Param,
-				fieldError.Value,
-			),
-		)
+		switch fieldError.Tag {
+
+		case "validProvider":
+			ui.Error(fmt.Sprintf("Provider must be one of: %s", validProviders))
+
+		default:
+			ui.Error(
+				fmt.Sprintf(
+					"Validation failed for field '%s' with validator '%s=%s' and value '%s'.",
+					fieldError.NameNamespace,
+					fieldError.Tag,
+					fieldError.Param,
+					fieldError.Value,
+				),
+			)
+		}
 	}
+}
+
+func validProvider(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
+	valid := false
+	for _, val := range validProviders {
+		if param == val {
+			valid = true
+		}
+	}
+	return valid
 }
