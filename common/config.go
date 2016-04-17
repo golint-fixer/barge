@@ -47,13 +47,13 @@ func GetConfig(ui cli.Ui) (*Bargefile, error) {
 	// Unmarshal bytes onto raw map.
 	rawBargefile := &map[string]map[string]interface{}{}
 	if err := hcl.Unmarshal(bargeBytes, rawBargefile); err != nil {
-		return nil, fmt.Errorf("Could not read Bargefile: %s", err)
+		return nil, err
 	}
 
 	// Map raw Bargefile config onto Bargefile struct.
 	bargefile := &Bargefile{&DevEnvConfig{}}
 	if err := mapstructure.Decode(rawBargefile, bargefile); err != nil {
-		return nil, fmt.Errorf("Error processing Bargefile: %s", err)
+		return nil, err
 	}
 
 	// Validate Bargefile.
