@@ -3,3 +3,4 @@ import:
 - package: github.com/hashicorp/hcl
 - package: github.com/mitchellh/cli
 - package: github.com/mitchellh/mapstructure
+- package: gopkg.in/go-playground/validator.v8
