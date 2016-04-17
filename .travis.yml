@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - 1.6
+
+env:
+  - GO15VENDOREXPERIMENT=1
+
+install:
+  - go get -u github.com/golang/lint/golint
+  - go get github.com/Masterminds/glide
+  - glide install
+  - go install .
+
+script:
+  - golint -min_confidence 0.0 $PROJECT_GOPATH
+  - go vet .
+  - go test -v -cover $(go list ./... | grep -v '/vendor/')

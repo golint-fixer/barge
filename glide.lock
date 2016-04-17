@@ -1,5 +1,5 @@
-hash: 912e18b56e81c2b3fbecf66aa6b396f3100fd096613a8449f0bd707eda4494ee
-updated: 2016-04-14T16:09:22.513169327-05:00
+hash: 2e6480eb49826544843bed82a5fd0b59a1f11f6b27061718a99736238f214066
+updated: 2016-04-17T15:09:14.541286487-05:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
@@ -20,4 +20,8 @@ imports:
   version: 56b76bdf51f7708750eac80fa38b952bb9f32639
 - name: github.com/mitchellh/cli
   version: 168daae10d6ff81b8b1201b0a4c9607d7e9b82e3
+- name: github.com/mitchellh/mapstructure
+  version: d2dd0262208475919e1a362f675cfc0e7c10e905
+- name: gopkg.in/go-playground/validator.v8
+  version: 014792cf3e266caff1e916876be12282b33059e0
 devImports: []
