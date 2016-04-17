@@ -1,5 +1,5 @@
-hash: 912e18b56e81c2b3fbecf66aa6b396f3100fd096613a8449f0bd707eda4494ee
-updated: 2016-04-17T13:37:06.071327747-05:00
+hash: 0ee8a0647b02ce12cd45c7b2dbc3eedff5a102c479a7daefeb0fa166a5a109ea
+updated: 2016-04-17T15:06:11.408737914-05:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
@@ -20,4 +20,6 @@ imports:
   version: 56b76bdf51f7708750eac80fa38b952bb9f32639
 - name: github.com/mitchellh/cli
   version: 168daae10d6ff81b8b1201b0a4c9607d7e9b82e3
+- name: github.com/mitchellh/mapstructure
+  version: d2dd0262208475919e1a362f675cfc0e7c10e905
 devImports: []
