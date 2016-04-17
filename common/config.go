@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"reflect"
 
 	"github.com/hashicorp/hcl"
@@ -39,16 +38,10 @@ type DevEnvConfig struct {
 // GetConfig taken from the local Bargefile. Will panic if Bargefile not found or if there was trouble reading the file.
 func GetConfig(ui cli.Ui) (*Bargefile, error) {
 	// TODO(TheDodd): make this optional at some point, like the Appfile.
-	// If the Bargefile does not exist, then abort.
-	if _, err := os.Stat("Bargefile"); err != nil {
-		return nil, errors.New("Bargefile not found in current directory.")
-	}
-
-	// Read bytes from Bargefile.
+	// Attempt to read from the Bargefile.
 	bargeBytes, err := ioutil.ReadFile("Bargefile")
 	if err != nil {
-		return nil, fmt.Errorf("Error reading Bargefile: %s", err)
-
+		return nil, errors.New("Bargefile not found in current directory.")
 	}
 
 	// Unmarshal bytes onto raw map.
