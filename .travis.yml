@@ -18,5 +18,5 @@ install:
 script:
   - golint -min_confidence 0.0 $PROJECT_GOPATH
   - go vet .
-  # - go test -v -cover $(go list ./... | grep -v '/vendor/') # Raw test command.
+  - go test -v -cover $(go list ./... | grep -v '/vendor/') # Raw test command.
   - $HOME/gopath/bin/goveralls -service=travis-ci -repotoken $COVERALLS_TOKEN -v
