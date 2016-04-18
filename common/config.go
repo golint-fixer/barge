@@ -107,7 +107,6 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 
 // A custom validator for validating the Development.Provider.
 func validProvider(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
-	fmt.Println("Custom validation:", topStruct, currentStructOrField, field, fieldType, fieldKind, param)
 	valid := false
 	for _, val := range validProviders {
 		if field.String() == val {
