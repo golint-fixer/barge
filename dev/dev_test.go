@@ -6,29 +6,43 @@ import (
 	"testing"
 
 	"github.com/mitchellh/cli"
+	"github.com/thedodd/barge/common"
 )
 
 var (
-	developmentBargefile = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
+	developmentBargefile = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
 )
 
-// mockUI - a mock cli.Ui for testing.
-func mockUI(t *testing.T) *cli.MockUi {
-	return &cli.MockUi{}
-}
+func setUp(data []byte) (tmpDir string, config *common.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
+	// Build a *Command instance.
+	ui = &cli.MockUi{}
+	cmd = &Command{ui}
 
-// writeBargefile - write the given []byte to ./Bargefile.
-func writeBargefile(data []byte) string {
-	ioutil.WriteFile("Bargefile", data, 0777)
-	return string(data[:])
+	// Create a temporary directory for a test to run.
+	tmpDir, _ = ioutil.TempDir("/tmp", "barge")
+	originalWD, _ := os.Getwd()
+	os.Chdir(tmpDir)
+
+	// Write the given Bargefile data.
+	if data != nil {
+		ioutil.WriteFile("Bargefile", data, 0777)
+		config, _ = common.GetConfig(cmd.UI)
+	} else {
+		config = &common.Bargefile{Development: &common.DevEnvConfig{}}
+	}
+
+	return tmpDir, config, cmd, ui, func() {
+		os.Chdir(originalWD)
+		os.RemoveAll(tmpDir)
+	}
 }
 
 ////////////////////
 // Tests for Run. //
 ////////////////////
 func TestRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
-	ui := mockUI(t)
-	cmd := &Command{ui}
+	_, _, cmd, ui, cleanup := setUp(nil)
+	defer cleanup()
 
 	output := cmd.Run([]string{})
 
@@ -41,12 +55,8 @@ func TestRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
 }
 
 func TestRunReturns0WithSuccess(t *testing.T) {
-	ui := mockUI(t)
-	cmd := &Command{ui}
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile(developmentBargefile)
+	_, _, cmd, ui, cleanup := setUp(developmentBargefile)
+	defer cleanup()
 
 	output := cmd.Run([]string{})
 

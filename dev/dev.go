@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mitchellh/cli"
+
 	"github.com/thedodd/barge/common"
 )
 

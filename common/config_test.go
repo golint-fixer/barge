@@ -9,31 +9,39 @@ import (
 )
 
 var (
-	developmentBargefile       = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
-	developmentInvalidProvider = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"invalidDriver\"\nram = 1024}")
-	developmentInvalidDisk     = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
+	developmentBargefile     = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
+	developmentInvalidDriver = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"invalidDriver\"\nram = 1024}")
+	developmentInvalidDisk   = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
 )
 
-// mockUI - a mock cli.Ui for testing.
-func mockUI(t *testing.T) *cli.MockUi {
-	return &cli.MockUi{}
-}
+func setUp(data []byte) (tmpDir string, ui *cli.MockUi, cb func()) {
+	// Build a *Command instance.
+	ui = &cli.MockUi{}
 
-// writeBargefile - write the given []byte to ./Bargefile.
-func writeBargefile(data []byte) string {
-	ioutil.WriteFile("Bargefile", data, 0777)
-	return string(data[:])
+	// Create a temporary directory for a test to run.
+	tmpDir, _ = ioutil.TempDir("/tmp", "barge")
+	originalWD, _ := os.Getwd()
+	os.Chdir(tmpDir)
+
+	// Write the given Bargefile data.
+	if data != nil {
+		ioutil.WriteFile("Bargefile", data, 0777)
+	}
+
+	return tmpDir, ui, func() {
+		os.Chdir(originalWD)
+		os.RemoveAll(tmpDir)
+	}
 }
 
 //////////////////////////
 // Tests for GetConfig. //
 //////////////////////////
 func TestGetConfigErrsWhereNoBargefileExists(t *testing.T) {
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
+	_, ui, cleanup := setUp(nil)
+	defer cleanup()
 
-	_, err := GetConfig(mockUI(t))
+	_, err := GetConfig(ui)
 
 	if err == nil {
 		t.Error("Expected error to be returned.")
@@ -44,11 +52,8 @@ func TestGetConfigErrsWhereNoBargefileExists(t *testing.T) {
 }
 
 func TestGetConfigErrsWhereBargefileIsMalformedAndFailsUnmarshaling(t *testing.T) {
-	ui := mockUI(t)
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile([]byte("malformed"))
+	_, ui, cleanup := setUp([]byte("malformed"))
+	defer cleanup()
 
 	_, err := GetConfig(ui)
 
@@ -64,11 +69,8 @@ func TestGetConfigErrsWhereBargefileIsMalformedAndFailsUnmarshaling(t *testing.T
 }
 
 func TestGetConfigErrsWhereBargefileUnmarshalContainsBadType(t *testing.T) {
-	ui := mockUI(t)
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile([]byte(`development {ram = "not a valid int"}`))
+	_, ui, cleanup := setUp([]byte(`development {ram = "not a valid int"}`))
+	defer cleanup()
 
 	_, err := GetConfig(ui)
 
@@ -84,11 +86,8 @@ func TestGetConfigErrsWhereBargefileUnmarshalContainsBadType(t *testing.T) {
 }
 
 func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
-	ui := mockUI(t)
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile(developmentInvalidProvider)
+	_, ui, cleanup := setUp(developmentInvalidDriver)
+	defer cleanup()
 
 	_, err := GetConfig(ui)
 
@@ -104,12 +103,9 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
 }
 
 func TestGetConfigErrsWhereBargefileValidationFailsOnStandardField(t *testing.T) {
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile(developmentInvalidDisk)
+	_, ui, cleanup := setUp(developmentInvalidDisk)
+	defer cleanup()
 
-	ui := mockUI(t)
 	_, err := GetConfig(ui)
 
 	if "Error(s) validating Bargefile." != err.Error() {
@@ -124,11 +120,8 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnStandardField(t *testing.T)
 }
 
 func TestGetConfigReturnsExpectedBargefile(t *testing.T) {
-	ui := mockUI(t)
-	dir, _ := ioutil.TempDir("/tmp", "barge")
-	defer os.RemoveAll(dir)
-	os.Chdir(dir)
-	writeBargefile(developmentBargefile)
+	_, ui, cleanup := setUp(developmentBargefile)
+	defer cleanup()
 
 	bargefile, err := GetConfig(ui)
 	dev := bargefile.Development
