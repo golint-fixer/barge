@@ -26,13 +26,7 @@ func (cmd *Command) Run(args []string) int {
 		cmd.UI.Error(err.Error())
 		return 1
 	}
-
-	cmd.UI.Warn(fmt.Sprint(config.Development))
-	cmd.UI.Warn(fmt.Sprint(config.Development.Disk))
-	cmd.UI.Warn(config.Development.MachineName)
-	cmd.UI.Warn(config.Development.Network)
-	cmd.UI.Warn(config.Development.Provider)
-	cmd.UI.Warn(fmt.Sprint(config.Development.RAM))
+	fmt.Println(fmt.Sprintf("%+v", config))
 	return 0
 }
 

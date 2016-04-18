@@ -9,15 +9,17 @@ import (
 )
 
 var (
+	developmentBargefile       = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
 	developmentInvalidProvider = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"invalidProvider\"\nram = 1024}")
 	developmentInvalidDisk     = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
-	developmentBargefile       = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
 )
 
+// mockUI - a mock cli.Ui for testing.
 func mockUI(t *testing.T) *cli.MockUi {
 	return &cli.MockUi{}
 }
 
+// writeBargefile - write the given []byte to ./Bargefile.
 func writeBargefile(data []byte) string {
 	ioutil.WriteFile("Bargefile", data, 0777)
 	return string(data[:])
