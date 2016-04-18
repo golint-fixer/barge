@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	developmentBargefile       = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
-	developmentInvalidProvider = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"invalidProvider\"\nram = 1024}")
-	developmentInvalidDisk     = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\nprovider = \"virtualbox\"\nram = 1024}")
+	developmentBargefile       = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
+	developmentInvalidProvider = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"invalidDriver\"\nram = 1024}")
+	developmentInvalidDisk     = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
 )
 
 // mockUI - a mock cli.Ui for testing.
@@ -95,7 +95,7 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
 	if "Error(s) validating Bargefile." != err.Error() {
 		t.Errorf("Unexpected error message: %s", err.Error())
 	}
-	if "Provider must be one of: [virtualbox] Given value: invalidProvider\n" != ui.ErrorWriter.String() {
+	if "Driver must be one of: [virtualbox] Given value: invalidDriver\n" != ui.ErrorWriter.String() {
 		t.Errorf("Unexpected UI error: %s", ui.ErrorWriter.String())
 	}
 	if "" != ui.OutputWriter.String() {
@@ -136,7 +136,7 @@ func TestGetConfigReturnsExpectedBargefile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error message: %s", err.Error())
 	}
-	if dev.Disk != 5120 || dev.MachineName != "devVM" || dev.Network != "bridge" || dev.Provider != "virtualbox" || dev.RAM != 1024 {
+	if dev.Disk != 5120 || dev.MachineName != "devVM" || dev.Network != "bridge" || dev.Driver != "virtualbox" || dev.RAM != 1024 {
 		t.Errorf("Bargefile.Development not populated with expected values: %+v", bargefile)
 	}
 }
