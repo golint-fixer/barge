@@ -45,27 +45,45 @@ func GetConfig(ui cli.Ui) (*Bargefile, error) {
 	}
 
 	// Unmarshal bytes onto raw map.
+	bargefile := &Bargefile{&DevEnvConfig{}}
 	rawBargefile := &map[string]map[string]interface{}{}
 	if err := hcl.Unmarshal(bargeBytes, rawBargefile); err != nil {
-		return nil, err
+		handleConfigErrors(ui, bargefile, err)
+		return nil, errors.New("Error reading Bargefile.")
 	}
 
 	// Map raw Bargefile config onto Bargefile struct.
-	bargefile := &Bargefile{&DevEnvConfig{}}
 	if err := mapstructure.Decode(rawBargefile, bargefile); err != nil {
-		return nil, err
+		handleConfigErrors(ui, bargefile, err)
+		return nil, errors.New("Error(s) parsing Bargefile.")
 	}
 
 	// Validate Bargefile.
 	if err := validate.Struct(bargefile); err != nil {
-		errs, _ := err.(validator.ValidationErrors)
-		handleValidationErrors(ui, bargefile, errs)
-		return nil, errors.New("Errors validating Bargefile.")
+		handleConfigErrors(ui, bargefile, err)
+		return nil, errors.New("Error(s) validating Bargefile.")
 	}
 
 	return bargefile, nil
 }
 
+// Handle all errors related to getting runtime configuration.
+func handleConfigErrors(ui cli.Ui, bargefile *Bargefile, err error) {
+	switch eType := err.(type) {
+	case validator.ValidationErrors:
+		handleValidationErrors(ui, bargefile, eType)
+
+	case *mapstructure.Error:
+		for _, er := range eType.WrappedErrors() {
+			ui.Error(er.Error())
+		}
+
+	default:
+		ui.Error(eType.Error())
+	}
+}
+
+// Handle validator validation errors.
 func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.ValidationErrors) {
 	for _, fieldError := range errs {
 		switch fieldError.Tag {
@@ -76,7 +94,7 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 		default:
 			ui.Error(
 				fmt.Sprintf(
-					"Validation failed for field '%s' with validator '%s=%s' and value '%s'.",
+					"Validation failed for field '%s' with validator '%s=%s' and value '%v'.",
 					fieldError.NameNamespace,
 					fieldError.Tag,
 					fieldError.Param,
@@ -87,6 +105,7 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 	}
 }
 
+// A custom validator for validating the Development.Provider.
 func validProvider(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
 	fmt.Println("Custom validation:", topStruct, currentStructOrField, field, fieldType, fieldKind, param)
 	valid := false
