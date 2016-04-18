@@ -13,10 +13,14 @@ install:
   - go install .
 
   # For coveralls support.
-  - go get github.com/mattn/goveralls
+  - go get github.com/onsi/gomega
+  - go get github.com/onsi/ginkgo
+  - go get golang.org/x/tools/cmd/cover
 
 script:
   - golint -min_confidence 0.0 $PROJECT_GOPATH
   - go vet .
-  - go test -v -cover $(go list ./... | grep -v '/vendor/') # Raw test command.
-  - $HOME/gopath/bin/goveralls -service=travis-ci -repotoken $COVERALLS_TOKEN -v
+  - go test -v -cover -coverprofile=coverage.txt -covermode=atomic $(go list ./... | grep -v '/vendor/')
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
