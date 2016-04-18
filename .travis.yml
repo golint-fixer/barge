@@ -21,7 +21,7 @@ script:
   - golint -min_confidence 0.0 $PROJECT_GOPATH
   - go vet .
   # - go test -v -cover $(go list ./... | grep -v '/vendor/') # Raw test command.
-  - for pkg in $(go list ./... | grep -v '/vendor/'); do go test -v -cover -coverprofile=cov.txt -covermode=atomic $pkg && cat cov.txt > coverage.txt; done
+  - for pkg in $(go list ./... | grep -v '/vendor/'); do go test -v -cover -coverprofile=cov.txt -covermode=atomic $pkg && cat cov.txt >> coverage.txt; done
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
