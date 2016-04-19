@@ -43,6 +43,7 @@ func main() {
 	bargeCLI := cli.NewCLI("barge", bargeVersion)
 	bargeCLI.Args = os.Args[1:]
 	bargeCLI.Commands = Commands
+	bargeCLI.Version = bargeVersion
 
 	exitStatus, err := bargeCLI.Run()
 	if err != nil {

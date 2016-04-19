@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	validate       = validator.New(&validator.Config{TagName: "validate"})
-	validProviders = []string{"virtualbox"}
+	validate     = validator.New(&validator.Config{TagName: "validate"})
+	validDrivers = []string{"virtualbox"}
 )
 
 func init() {
-	validate.RegisterValidation("validProvider", validProvider)
+	validate.RegisterValidation("validDriver", validDriver)
 }
 
 // Bargefile - the Bargefile config to drive this CLI.
@@ -31,7 +31,7 @@ type DevEnvConfig struct {
 	Disk        int    `mapstructure:"disk" validate:"required=true,min=5120"`
 	MachineName string `mapstructure:"machineName" validate:"required=true"`
 	Network     string `mapstructure:"network" validate:"required=true"`
-	Provider    string `mapstructure:"provider" validate:"required=true,validProvider"`
+	Driver      string `mapstructure:"driver" validate:"required=true,validDriver"`
 	RAM         int    `mapstructure:"ram" validate:"required=true"`
 }
 
@@ -88,8 +88,8 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 	for _, fieldError := range errs {
 		switch fieldError.Tag {
 
-		case "validProvider":
-			ui.Error(fmt.Sprintf("Provider must be one of: %s Given value: %s", validProviders, fieldError.Value))
+		case "validDriver":
+			ui.Error(fmt.Sprintf("Driver must be one of: %s Given value: %s", validDrivers, fieldError.Value))
 
 		default:
 			ui.Error(
@@ -106,9 +106,9 @@ func handleValidationErrors(ui cli.Ui, bargefile *Bargefile, errs validator.Vali
 }
 
 // A custom validator for validating the Development.Provider.
-func validProvider(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
+func validDriver(v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value, field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string) bool {
 	valid := false
-	for _, val := range validProviders {
+	for _, val := range validDrivers {
 		if field.String() == val {
 			valid = true
 		}
