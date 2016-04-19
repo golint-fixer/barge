@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/registry"
 
 	"github.com/mitchellh/cli"
 )
@@ -27,11 +29,21 @@ func (cmd *Command) Run(args []string) int {
 		cmd.UI.Error(err.Error())
 		return 1
 	}
-	fmt.Println(fmt.Sprintf("Development: %+v", config.Development))
+
+	// Select the driver to use for development.
+	driver := selectDriver(config, cmd.UI)
+	fmt.Println(fmt.Sprintf("%T: %+v", driver, driver))
+
 	return 0
 }
 
 // Synopsis of the `dev` command.
 func (cmd *Command) Synopsis() string {
 	return "Synopsis of `dev` command."
+}
+
+func selectDriver(config *core.Bargefile, ui cli.Ui) core.Driver {
+	// Validation of allowed drivers is taken core of by the configuration system.
+	// No need to validate here.
+	return registry.Registry[config.Development.Driver]
 }

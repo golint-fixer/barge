@@ -1,26 +1,14 @@
 package core
 
-import (
-	"io"
-
-	"github.com/mitchellh/cli"
-)
-
-// CmdInterface an interface wrapping the os/exec.Cmd struct. Makes command execution unit testable.
-type CmdInterface interface {
-	CombinedOutput() ([]byte, error)
-	Output() ([]byte, error)
-	Run() error
-	Start() error
-	StderrPipe() (io.ReadCloser, error)
-	StdinPipe() (io.WriteCloser, error)
-	StdoutPipe() (io.ReadCloser, error)
-	Wait() error
-}
+import "github.com/mitchellh/cli"
 
 // Driver describes the interface which must be implemented by any type which is to provide a
 // docker-machine driver interface for Barge.
 type Driver interface {
+	// // Name
+	// // The name of this driver.
+	// Name() string
+
 	// Deps
 	// Return a slice of *Dep describing all needed command-line tools for this driver.
 	Deps() []*Dep

@@ -7,6 +7,8 @@ import (
 
 	"github.com/thedodd/barge/common"
 	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/drivers"
+	"github.com/thedodd/barge/registry"
 
 	"github.com/mitchellh/cli"
 )
@@ -98,5 +100,21 @@ func TestSynopsisReturnsExpectedText(t *testing.T) {
 
 	if expected != output {
 		t.Errorf("Unexpected output: %s", output)
+	}
+}
+
+/////////////////////////////
+// Tests for selectDriver. //
+/////////////////////////////
+func TestSelectDriverReturnsExpectedDriver(t *testing.T) {
+	_, config, _, ui, cleanup := setUp(developmentBargefile)
+	defer cleanup()
+	expectedDriver := registry.Registry[config.Development.Driver]
+
+	driver := selectDriver(config, ui)
+	_, ok := driver.(*drivers.VirtualBox)
+
+	if driver != expectedDriver || ok != true {
+		t.Error("Unexpected driver selected.")
 	}
 }
