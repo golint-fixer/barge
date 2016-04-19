@@ -5,15 +5,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mitchellh/cli"
 	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/core"
+
+	"github.com/mitchellh/cli"
 )
 
 var (
 	developmentBargefile = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
 )
 
-func setUp(data []byte) (tmpDir string, config *common.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
+func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
 	// Build a *Command instance.
 	ui = &cli.MockUi{}
 	cmd = &Command{ui}
@@ -28,7 +30,7 @@ func setUp(data []byte) (tmpDir string, config *common.Bargefile, cmd *Command, 
 		ioutil.WriteFile("Bargefile", data, 0777)
 		config, _ = common.GetConfig(cmd.UI)
 	} else {
-		config = &common.Bargefile{Development: &common.DevEnvConfig{}}
+		config = &core.Bargefile{Development: &core.DevEnvConfig{}}
 	}
 
 	return tmpDir, config, cmd, ui, func() {

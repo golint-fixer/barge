@@ -3,9 +3,9 @@ package dev
 import (
 	"fmt"
 
-	"github.com/mitchellh/cli"
-
 	"github.com/thedodd/barge/common"
+
+	"github.com/mitchellh/cli"
 )
 
 // Command interface implementation for the `dev` command.
@@ -27,7 +27,7 @@ func (cmd *Command) Run(args []string) int {
 		cmd.UI.Error(err.Error())
 		return 1
 	}
-	fmt.Println(fmt.Sprintf("%+v", config))
+	fmt.Println(fmt.Sprintf("Development: %+v", config.Development))
 	return 0
 }
 
