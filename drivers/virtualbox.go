@@ -9,11 +9,6 @@ import (
 // VirtualBox is the Barge driver implementation for interfacing with VirtualBox via docker-machine.
 type VirtualBox struct{}
 
-// // Name returns the name of this driver.
-// func (vb *VirtualBox) Name() string {
-// 	return ""
-// }
-
 // Deps returns a slice of *Dep describing all needed command-line tools for this driver.
 func (vb *VirtualBox) Deps() []*core.Dep {
 	return []*core.Dep{
@@ -24,16 +19,16 @@ func (vb *VirtualBox) Deps() []*core.Dep {
 }
 
 // Start a docker machine according to the Bargefile specs.
-func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui *cli.Ui) {
+func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) {
 	return
 }
 
 // Stop the docker machine.
-func (vb *VirtualBox) Stop(bargefile *core.Bargefile, ui *cli.Ui) {
+func (vb *VirtualBox) Stop(bargefile *core.Bargefile, ui cli.Ui) {
 	return
 }
 
 // Restart the docker machine.
-func (vb *VirtualBox) Restart(bargefile *core.Bargefile, ui *cli.Ui) {
+func (vb *VirtualBox) Restart(bargefile *core.Bargefile, ui cli.Ui) {
 	return
 }
