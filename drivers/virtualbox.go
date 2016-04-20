@@ -1,6 +1,9 @@
 package drivers
 
 import (
+	"fmt"
+	"os/exec"
+
 	"github.com/thedodd/barge/core"
 
 	"github.com/mitchellh/cli"
@@ -19,16 +22,30 @@ func (vb *VirtualBox) Deps() []*core.Dep {
 }
 
 // Start a docker machine according to the Bargefile specs.
-func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) {
-	return
+func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) int {
+	cmd := exec.Command(
+		"docker-machine",
+		"create", "--driver", "virtualbox",
+		"--virtualbox-disk-size", fmt.Sprint(bargefile.Development.Disk),
+		"--virtualbox-memory", fmt.Sprint(bargefile.Development.RAM),
+		bargefile.Development.MachineName,
+	)
+	uiWriter := &cli.UiWriter{Ui: ui}
+	cmd.Stdout = uiWriter
+	cmd.Stderr = uiWriter
+	if err := cmd.Run(); err != nil {
+		ui.Error(err.Error())
+		return 1
+	}
+	return 0
 }
 
 // Stop the docker machine.
-func (vb *VirtualBox) Stop(bargefile *core.Bargefile, ui cli.Ui) {
-	return
+func (vb *VirtualBox) Stop(bargefile *core.Bargefile, ui cli.Ui) int {
+	return 0
 }
 
 // Restart the docker machine.
-func (vb *VirtualBox) Restart(bargefile *core.Bargefile, ui cli.Ui) {
-	return
+func (vb *VirtualBox) Restart(bargefile *core.Bargefile, ui cli.Ui) int {
+	return 0
 }

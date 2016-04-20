@@ -11,15 +11,15 @@ type Driver interface {
 
 	// Start
 	// Start a docker machine according to the Bargefile using this driver.
-	Start(*Bargefile, cli.Ui)
+	Start(*Bargefile, cli.Ui) int
 
 	// Stop
 	// Stop the docker machine running under this driver for the given Bargefile.
-	Stop(*Bargefile, cli.Ui)
+	Stop(*Bargefile, cli.Ui) int
 
 	// Restart
 	// Restart the docker machine running under this driver for the given Bargefile.
-	Restart(*Bargefile, cli.Ui)
+	Restart(*Bargefile, cli.Ui) int
 }
 
 // Dep a type describing a needed command-line tool.

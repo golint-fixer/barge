@@ -1,8 +1,6 @@
 package dev
 
 import (
-	"fmt"
-
 	"github.com/thedodd/barge/common"
 	"github.com/thedodd/barge/core"
 	"github.com/thedodd/barge/registry"
@@ -11,6 +9,7 @@ import (
 )
 
 // Command interface implementation for the `dev` command.
+// TODO(TheDodd): might have to rename this later to `StartCommand`.
 type Command struct {
 	UI cli.Ui
 }
@@ -32,9 +31,13 @@ func (cmd *Command) Run(args []string) int {
 
 	// Select the driver to use for development.
 	driver := selectDriver(config, cmd.UI)
-	fmt.Println(fmt.Sprintf("%T: %+v", driver, driver))
 
-	return 0
+	// TODO(TheDodd): get this logic in line.
+	// Ensure driver's dependencies are installed and ready to rock.
+	// ensureDeps(driver, config, ui)
+
+	// Execute the drivers `Start` method.
+	return driver.Start(config, cmd.UI)
 }
 
 // Synopsis of the `dev` command.
