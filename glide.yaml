@@ -4,3 +4,5 @@ import:
 - package: github.com/mitchellh/cli
 - package: github.com/mitchellh/mapstructure
 - package: gopkg.in/go-playground/validator.v8
+- package: github.com/stretchr/testify
+  version: v1.1.3

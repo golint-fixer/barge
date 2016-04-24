@@ -1,5 +1,5 @@
-hash: 2e6480eb49826544843bed82a5fd0b59a1f11f6b27061718a99736238f214066
-updated: 2016-04-18T17:03:18.806692436-05:00
+hash: 0ecc4e73f97a56240e589a189ac3dc608ab9efd764ad62272c89802ff20ccfd0
+updated: 2016-04-23T16:10:07.957878606-05:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
@@ -12,8 +12,8 @@ imports:
   - hcl/parser
   - hcl/token
   - json/parser
-  - hcl/printer
   - hcl/scanner
+  - hcl/strconv
   - json/scanner
   - json/token
 - name: github.com/mattn/go-isatty
@@ -22,6 +22,12 @@ imports:
   version: 168daae10d6ff81b8b1201b0a4c9607d7e9b82e3
 - name: github.com/mitchellh/mapstructure
   version: d2dd0262208475919e1a362f675cfc0e7c10e905
+- name: github.com/stretchr/testify
+  version: f390dcf405f7b83c997eac1b06768bb9f44dec18
+- name: golang.org/x/sys
+  version: f64b50fbea64174967a8882830d621a18ee1548e
+  subpackages:
+  - unix
 - name: gopkg.in/go-playground/validator.v8
   version: 014792cf3e266caff1e916876be12282b33059e0
 devImports: []

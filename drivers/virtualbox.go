@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/thedodd/barge/core"
-
 	"github.com/mitchellh/cli"
+	"github.com/thedodd/barge/core"
 )
 
 // VirtualBox is the Barge driver implementation for interfacing with VirtualBox via docker-machine.
@@ -23,6 +22,8 @@ func (vb *VirtualBox) Deps() []*core.Dep {
 
 // Start a docker machine according to the Bargefile specs.
 func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) int {
+	// Build up the command to execute.
+	uiWriter := &cli.UiWriter{Ui: ui}
 	cmd := exec.Command(
 		"docker-machine",
 		"create", "--driver", "virtualbox",
@@ -30,10 +31,14 @@ func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) int {
 		"--virtualbox-memory", fmt.Sprint(bargefile.Development.RAM),
 		bargefile.Development.MachineName,
 	)
-	uiWriter := &cli.UiWriter{Ui: ui}
 	cmd.Stdout = uiWriter
 	cmd.Stderr = uiWriter
-	if err := cmd.Run(); err != nil {
+
+	// Wrap command for testability.
+	cmdIface := core.CommandWrapper(cmd)
+
+	// Execute command and expose any errors.
+	if err := cmdIface.Run(); err != nil {
 		ui.Error(err.Error())
 		return 1
 	}

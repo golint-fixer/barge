@@ -1,13 +1,16 @@
 package drivers
 
 import (
+	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/mitchellh/cli"
 	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/testutils"
 )
 
-func setUp() (*core.Bargefile, *cli.MockUi, *VirtualBox) {
+func setUp() (*core.Bargefile, *cli.MockUi, *VirtualBox, *testutils.MockCmd, func()) {
 	bargefile := &core.Bargefile{
 		Development: &core.DevEnvConfig{
 			Disk:        5120,
@@ -19,14 +22,23 @@ func setUp() (*core.Bargefile, *cli.MockUi, *VirtualBox) {
 	}
 	ui := &cli.MockUi{}
 	vb := &VirtualBox{}
-	return bargefile, ui, vb
+
+	// NOTICE: CommandWrapper is overwritten here for testing purposes.
+	origWrapper := core.CommandWrapper
+	cmdMock := &testutils.MockCmd{}
+	core.CommandWrapper = testutils.CommandWrapper(cmdMock)
+
+	return bargefile, ui, vb, cmdMock, func() {
+		core.CommandWrapper = origWrapper
+	}
 }
 
 ////////////////////////////////
 // Tests for VirtualBox.Deps. //
 ////////////////////////////////
 func TestDepsReturnsExpectedSlice(t *testing.T) {
-	_, _, vb := setUp()
+	_, _, vb, _, cleanup := setUp()
+	defer cleanup()
 	expectedSlice := []*core.Dep{
 		&core.Dep{Name: "docker", MinVersion: "1.11.0", MaxVersion: ""},
 		&core.Dep{Name: "docker-machine", MinVersion: "0.7.0", MaxVersion: ""},
@@ -46,17 +58,58 @@ func TestDepsReturnsExpectedSlice(t *testing.T) {
 /////////////////////////////////
 // Tests for VirtualBox.Start. //
 /////////////////////////////////
-func TestStart(t *testing.T) {
-	config, ui, vb := setUp()
+func TestStartExecutesExpectedOSCall(t *testing.T) {
+	config, ui, vb, cmdMock, cleanup := setUp()
+	defer cleanup()
+	expectedArgs := []string{
+		"docker-machine", "create", "--driver", "virtualbox",
+		"--virtualbox-disk-size", fmt.Sprint(config.Development.Disk),
+		"--virtualbox-memory", fmt.Sprint(config.Development.RAM),
+		config.Development.MachineName,
+	}
+	cmdMock.On("Run").Return(nil)
 
-	vb.Start(config, ui)
+	output := vb.Start(config, ui)
+
+	if output != 0 {
+		t.Errorf("Expected return code of `%d`, got `%d`.", 0, output)
+	}
+	if !cmdMock.AssertExpectations(t) {
+		t.Error("Unmet expectations.")
+	}
+	for idx, val := range expectedArgs {
+		argVal := cmdMock.MockedCmd.Args[idx]
+		if argVal != val {
+			t.Errorf("Expected arg `%s` at cmd.Args[%d]; got `%s`.", val, idx, argVal)
+		}
+	}
+}
+
+func TestStartReturns1WithErrDuringOSCall(t *testing.T) {
+	config, ui, vb, cmdMock, cleanup := setUp()
+	defer cleanup()
+	uiError := "Testing error handling."
+	cmdMock.On("Run").Return(errors.New(uiError))
+
+	output := vb.Start(config, ui)
+
+	if output != 1 {
+		t.Errorf("Expected return code of `%d`, got `%d`.", 1, output)
+	}
+	if !cmdMock.AssertExpectations(t) {
+		t.Error("Unmet expectations.")
+	}
+	if fmt.Sprintf("%s\n", uiError) != ui.ErrorWriter.String() {
+		t.Errorf("Unexpected UI error: %s", ui.ErrorWriter.String())
+	}
 }
 
 ////////////////////////////////
 // Tests for VirtualBox.Stop. //
 ////////////////////////////////
 func TestStop(t *testing.T) {
-	config, ui, vb := setUp()
+	config, ui, vb, _, cleanup := setUp()
+	defer cleanup()
 
 	vb.Stop(config, ui)
 }
@@ -65,7 +118,8 @@ func TestStop(t *testing.T) {
 // Tests for VirtualBox.Restart. //
 ///////////////////////////////////
 func TestRestart(t *testing.T) {
-	config, ui, vb := setUp()
+	config, ui, vb, _, cleanup := setUp()
+	defer cleanup()
 
 	vb.Restart(config, ui)
 }

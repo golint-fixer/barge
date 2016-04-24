@@ -6,12 +6,7 @@ import (
 	"testing"
 
 	"github.com/mitchellh/cli"
-)
-
-var (
-	developmentBargefile     = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
-	developmentInvalidDriver = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"invalidDriver\"\nram = 1024}")
-	developmentInvalidDisk   = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
+	"github.com/thedodd/barge/testutils"
 )
 
 func setUp(data []byte) (tmpDir string, ui *cli.MockUi, cb func()) {
@@ -86,7 +81,7 @@ func TestGetConfigErrsWhereBargefileUnmarshalContainsBadType(t *testing.T) {
 }
 
 func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
-	_, ui, cleanup := setUp(developmentInvalidDriver)
+	_, ui, cleanup := setUp(testutils.DevelopmentInvalidDriver)
 	defer cleanup()
 
 	_, err := GetConfig(ui)
@@ -103,7 +98,7 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
 }
 
 func TestGetConfigErrsWhereBargefileValidationFailsOnStandardField(t *testing.T) {
-	_, ui, cleanup := setUp(developmentInvalidDisk)
+	_, ui, cleanup := setUp(testutils.DevelopmentInvalidDisk)
 	defer cleanup()
 
 	_, err := GetConfig(ui)
@@ -120,7 +115,7 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnStandardField(t *testing.T)
 }
 
 func TestGetConfigReturnsExpectedBargefile(t *testing.T) {
-	_, ui, cleanup := setUp(developmentBargefile)
+	_, ui, cleanup := setUp(testutils.DevelopmentBargefile)
 	defer cleanup()
 
 	bargefile, err := GetConfig(ui)
