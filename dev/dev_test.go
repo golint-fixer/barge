@@ -7,13 +7,13 @@ import (
 
 	"github.com/mitchellh/cli"
 	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/drivers"
+	"github.com/thedodd/barge/registry"
+	"github.com/thedodd/barge/testutils"
 )
 
-var (
-	developmentBargefile = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
-)
-
-func setUp(data []byte) (tmpDir string, config *common.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
+func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
 	// Build a *Command instance.
 	ui = &cli.MockUi{}
 	cmd = &Command{ui}
@@ -28,12 +28,26 @@ func setUp(data []byte) (tmpDir string, config *common.Bargefile, cmd *Command, 
 		ioutil.WriteFile("Bargefile", data, 0777)
 		config, _ = common.GetConfig(cmd.UI)
 	} else {
-		config = &common.Bargefile{Development: &common.DevEnvConfig{}}
+		config = &core.Bargefile{Development: &core.DevEnvConfig{}}
 	}
 
 	return tmpDir, config, cmd, ui, func() {
 		os.Chdir(originalWD)
 		os.RemoveAll(tmpDir)
+	}
+}
+
+func patchRegistry() func() {
+	// Patch the registry.
+	origRegistry := registry.Registry
+	newRegistry := make(map[string]core.Driver)
+	for key := range registry.Registry {
+		newRegistry[key] = &testutils.MockDriver{}
+	}
+	registry.Registry = newRegistry
+
+	return func() {
+		registry.Registry = origRegistry
 	}
 }
 
@@ -55,11 +69,18 @@ func TestRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
 }
 
 func TestRunReturns0WithSuccess(t *testing.T) {
-	_, _, cmd, ui, cleanup := setUp(developmentBargefile)
+	_, config, cmd, ui, cleanup := setUp(testutils.DevelopmentBargefile)
 	defer cleanup()
+	registryCleanup := patchRegistry()
+	defer registryCleanup()
+	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
+	mockedDriver.On("Start", config, ui).Return(0)
 
 	output := cmd.Run([]string{})
 
+	if !mockedDriver.AssertExpectations(t) {
+		t.Errorf("Expected assertions to be correct.")
+	}
 	if 0 != output {
 		t.Errorf("Expected return code 0, got: %d", output)
 	}
@@ -96,5 +117,21 @@ func TestSynopsisReturnsExpectedText(t *testing.T) {
 
 	if expected != output {
 		t.Errorf("Unexpected output: %s", output)
+	}
+}
+
+/////////////////////////////
+// Tests for selectDriver. //
+/////////////////////////////
+func TestSelectDriverReturnsExpectedDriver(t *testing.T) {
+	_, config, _, ui, cleanup := setUp(testutils.DevelopmentBargefile)
+	defer cleanup()
+	expectedDriver := registry.Registry[config.Development.Driver]
+
+	driver := selectDriver(config, ui)
+	_, ok := driver.(*drivers.VirtualBox)
+
+	if driver != expectedDriver || !ok {
+		t.Error("Unexpected driver selected.")
 	}
 }

@@ -1,14 +1,15 @@
 package dev
 
 import (
-	"fmt"
+	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/registry"
 
 	"github.com/mitchellh/cli"
-
-	"github.com/thedodd/barge/common"
 )
 
 // Command interface implementation for the `dev` command.
+// TODO(TheDodd): might have to rename this later to `StartCommand`.
 type Command struct {
 	UI cli.Ui
 }
@@ -27,11 +28,25 @@ func (cmd *Command) Run(args []string) int {
 		cmd.UI.Error(err.Error())
 		return 1
 	}
-	fmt.Println(fmt.Sprintf("%+v", config))
-	return 0
+
+	// Select the driver to use for development.
+	driver := selectDriver(config, cmd.UI)
+
+	// TODO(TheDodd): get this logic in line.
+	// Ensure driver's dependencies are installed and ready to rock.
+	// ensureDeps(driver, config, ui)
+
+	// Execute the drivers `Start` method.
+	return driver.Start(config, cmd.UI)
 }
 
 // Synopsis of the `dev` command.
 func (cmd *Command) Synopsis() string {
 	return "Synopsis of `dev` command."
+}
+
+func selectDriver(config *core.Bargefile, ui cli.Ui) core.Driver {
+	// Validation of allowed drivers is taken core of by the configuration system.
+	// No need to validate here.
+	return registry.Registry[config.Development.Driver]
 }
