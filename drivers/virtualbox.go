@@ -27,6 +27,7 @@ func (vb *VirtualBox) Up(bargefile *core.Bargefile, ui cli.Ui) int {
 	cmd := exec.Command(
 		"docker-machine",
 		"create", "--driver", "virtualbox",
+		"--virtualbox-cpu-count", fmt.Sprint(bargefile.Development.CPUS),
 		"--virtualbox-disk-size", fmt.Sprint(bargefile.Development.Disk),
 		"--virtualbox-memory", fmt.Sprint(bargefile.Development.RAM),
 		bargefile.Development.MachineName,

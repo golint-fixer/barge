@@ -63,6 +63,7 @@ func TestUpExecutesExpectedOSCall(t *testing.T) {
 	defer cleanup()
 	expectedArgs := []string{
 		"docker-machine", "create", "--driver", "virtualbox",
+		"--virtualbox-cpu-count", fmt.Sprint(config.Development.CPUS),
 		"--virtualbox-disk-size", fmt.Sprint(config.Development.Disk),
 		"--virtualbox-memory", fmt.Sprint(config.Development.RAM),
 		config.Development.MachineName,
