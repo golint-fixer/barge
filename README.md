@@ -21,7 +21,7 @@ barge [--version] [--help] <command> [<args>]
 
 Commands:
     init         Initialize a Bargefile in the working directory.
-    dev up       Spin up a new docker machine according to the specs found in
+    dev          Spin up a new docker machine according to the specs found in
                  the working directory's Bargefile.
     dev destroy  Destroy the docker machine specified in the working directory's
                  Bargefile.

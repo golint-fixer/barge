@@ -8,20 +8,19 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-// Command interface implementation for the `dev` command.
-// TODO(TheDodd): might have to rename this later to `StartCommand`.
-type Command struct {
+// UpCommand interface implementation for the `dev` command.
+type UpCommand struct {
 	UI cli.Ui
 }
 
 // Help text for the `dev` command.
-func (cmd *Command) Help() string {
+func (cmd *UpCommand) Help() string {
 	return "Help text for `dev` command."
 }
 
 // Run - the idea for this command is that it will provision a docker-machine for
 // your project based on the Bargefile configuration.
-func (cmd *Command) Run(args []string) int {
+func (cmd *UpCommand) Run(args []string) int {
 	// Get runtime config from Bargefile.
 	config, err := common.GetConfig(cmd.UI)
 	if err != nil {
@@ -41,7 +40,7 @@ func (cmd *Command) Run(args []string) int {
 }
 
 // Synopsis of the `dev` command.
-func (cmd *Command) Synopsis() string {
+func (cmd *UpCommand) Synopsis() string {
 	return "Synopsis of `dev` command."
 }
 
