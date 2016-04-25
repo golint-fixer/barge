@@ -9,6 +9,7 @@ import (
 
 	"github.com/mitchellh/cli"
 	"github.com/thedodd/barge/dev"
+	"github.com/thedodd/barge/initc"
 )
 
 const (
@@ -29,12 +30,12 @@ func main() {
 
 	// Build command factory and register it with the top-level CLI.
 	commands := map[string]cli.CommandFactory{
+		"init": func() (cli.Command, error) {
+			return &initc.InitCommand{UI: ui}, nil
+		},
 		"dev": func() (cli.Command, error) {
 			return &dev.UpCommand{UI: ui}, nil
 		},
-		// "dev destroy": func() (cli.Command, error) {
-		// 	return &dev.DestroyCommand{UI: ui}, nil
-		// },
 	}
 	bargeCLI := &cli.CLI{
 		Args:     os.Args[1:],
