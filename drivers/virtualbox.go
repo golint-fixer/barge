@@ -22,6 +22,7 @@ func (vb *VirtualBox) Deps() []*core.Dep {
 
 // Up spin up a docker machine according to the Bargefile specs.
 func (vb *VirtualBox) Up(bargefile *core.Bargefile, ui cli.Ui) int {
+	// TODO(thedodd): check if machine already exists by name.
 	// Build up the command to execute.
 	uiWriter := &cli.UiWriter{Ui: ui}
 	cmd := exec.Command(

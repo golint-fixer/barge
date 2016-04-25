@@ -42,4 +42,7 @@ development:
     ram: int — the amount of RAM (MiB) to allocate to the docker machine.
 ```
 
+Available drivers:
+- virtualbox
+
 Currently, the goal is to use only explicit configuration in the Barge ecosystem. Generally speaking, favoring explicit over implicit patterns yields better predictability in software systems, IMHO.
