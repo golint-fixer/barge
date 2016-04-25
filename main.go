@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/mitchellh/cli"
-
 	"github.com/thedodd/barge/dev"
 )
 
@@ -30,8 +29,8 @@ func main() {
 
 	// Build command factory and register it with the top-level CLI.
 	commands := map[string]cli.CommandFactory{
-		"dev up": func() (cli.Command, error) {
-			return &dev.Command{UI: ui}, nil
+		"dev": func() (cli.Command, error) {
+			return &dev.UpCommand{UI: ui}, nil
 		},
 		// "dev destroy": func() (cli.Command, error) {
 		// 	return &dev.DestroyCommand{UI: ui}, nil

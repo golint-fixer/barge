@@ -13,10 +13,10 @@ import (
 	"github.com/thedodd/barge/testutils"
 )
 
-func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *Command, ui *cli.MockUi, cb func()) {
-	// Build a *Command instance.
+func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *UpCommand, ui *cli.MockUi, cb func()) {
+	// Build a *UpCommand instance.
 	ui = &cli.MockUi{}
-	cmd = &Command{ui}
+	cmd = &UpCommand{ui}
 
 	// Create a temporary directory for a test to run.
 	tmpDir, _ = ioutil.TempDir("/tmp", "barge")
@@ -74,7 +74,7 @@ func TestRunReturns0WithSuccess(t *testing.T) {
 	registryCleanup := patchRegistry()
 	defer registryCleanup()
 	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
-	mockedDriver.On("Start", config, ui).Return(0)
+	mockedDriver.On("Up", config, ui).Return(0)
 
 	output := cmd.Run([]string{})
 
@@ -96,7 +96,7 @@ func TestRunReturns0WithSuccess(t *testing.T) {
 // Tests for Help. //
 /////////////////////
 func TestHelpReturnsExpectedText(t *testing.T) {
-	cmd := &Command{&cli.MockUi{}}
+	cmd := &UpCommand{&cli.MockUi{}}
 	expected := "Help text for `dev` command."
 
 	output := cmd.Help()
@@ -110,7 +110,7 @@ func TestHelpReturnsExpectedText(t *testing.T) {
 // Tests for Synopsis. //
 /////////////////////////
 func TestSynopsisReturnsExpectedText(t *testing.T) {
-	cmd := &Command{&cli.MockUi{}}
+	cmd := &UpCommand{&cli.MockUi{}}
 	expected := "Synopsis of `dev` command."
 
 	output := cmd.Synopsis()

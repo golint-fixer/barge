@@ -21,14 +21,14 @@ barge [--version] [--help] <command> [<args>]
 
 Commands:
     init         Initialize a Bargefile in the working directory.
-    dev up       Spin up a new docker machine according to the specs found in
+    dev          Spin up a new docker machine according to the specs found in
                  the working directory's Bargefile.
     dev destroy  Destroy the docker machine specified in the working directory's
                  Bargefile.
     dev rebuild  Rebuild the docker machine specified in the working directory's
                  Bargefile.
 ```
-`--help` followed by a subcommand will display the help text for that subcommand.
+`--help` followed by a sub-command will display the help text for that sub-command.
 
 ### bargefile
 The `Bargefile` is a configuration file written in [HCL](https://github.com/hashicorp/hcl#syntax), with the following structure:

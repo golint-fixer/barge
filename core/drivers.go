@@ -9,17 +9,19 @@ type Driver interface {
 	// Return a slice of *Dep describing all needed command-line tools for this driver.
 	Deps() []*Dep
 
-	// Start
-	// Start a docker machine according to the Bargefile using this driver.
-	Start(*Bargefile, cli.Ui) int
+	// Up
+	// Up sping up a docker machine according to the Bargefile using this driver. Implementations
+	// of this interface MUST ENSURE that the machine is up and in a usable state whenever this
+	// command is invoked.
+	Up(*Bargefile, cli.Ui) int
 
-	// Stop
-	// Stop the docker machine running under this driver for the given Bargefile.
-	Stop(*Bargefile, cli.Ui) int
+	// Destroy
+	// Destroy the docker machine running under this driver for the given Bargefile.
+	Destroy(*Bargefile, cli.Ui) int
 
-	// Restart
-	// Restart the docker machine running under this driver for the given Bargefile.
-	Restart(*Bargefile, cli.Ui) int
+	// Rebuild
+	// Rebuild the docker machine running under this driver for the given Bargefile.
+	Rebuild(*Bargefile, cli.Ui) int
 }
 
 // Dep a type describing a needed command-line tool.

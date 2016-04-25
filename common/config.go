@@ -6,13 +6,13 @@ import (
 	"io/ioutil"
 	"reflect"
 
-	"github.com/thedodd/barge/core"
-	"github.com/thedodd/barge/registry"
+	"gopkg.in/go-playground/validator.v8"
 
 	"github.com/hashicorp/hcl"
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/mapstructure"
-	"gopkg.in/go-playground/validator.v8"
+	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/registry"
 )
 
 var validate = validator.New(&validator.Config{TagName: "validate"})
