@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	bargeVersion = "Barge 0.0.0"
+	bargeVersion = "Barge 0.1.0-alpha"
 	name         = "barge"
 )
 
