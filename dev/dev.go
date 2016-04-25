@@ -36,8 +36,8 @@ func (cmd *Command) Run(args []string) int {
 	// Ensure driver's dependencies are installed and ready to rock.
 	// ensureDeps(driver, config, ui)
 
-	// Execute the drivers `Start` method.
-	return driver.Start(config, cmd.UI)
+	// Execute the drivers `Up` method.
+	return driver.Up(config, cmd.UI)
 }
 
 // Synopsis of the `dev` command.

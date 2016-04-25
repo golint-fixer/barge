@@ -26,26 +26,26 @@ type MockDriver struct {
 	mock.Mock
 }
 
-// Deps return a slice of *Dep describing all needed command-line tools for this driver.
+// Deps -
 func (driver *MockDriver) Deps() []*core.Dep {
 	driver.Called()
 	return []*core.Dep{}
 }
 
-// Start a docker machine according to the Bargefile using this driver.
-func (driver *MockDriver) Start(bargefile *core.Bargefile, ui cli.Ui) int {
+// Up -
+func (driver *MockDriver) Up(bargefile *core.Bargefile, ui cli.Ui) int {
 	driver.Called(bargefile, ui)
 	return 0
 }
 
-// Stop the docker machine running under this driver for the given Bargefile.
-func (driver *MockDriver) Stop(bargefile *core.Bargefile, ui cli.Ui) int {
+// Destroy -
+func (driver *MockDriver) Destroy(bargefile *core.Bargefile, ui cli.Ui) int {
 	driver.Called(bargefile, ui)
 	return 0
 }
 
-// Restart the docker machine running under this driver for the given Bargefile.
-func (driver *MockDriver) Restart(bargefile *core.Bargefile, ui cli.Ui) int {
+// Rebuild -
+func (driver *MockDriver) Rebuild(bargefile *core.Bargefile, ui cli.Ui) int {
 	driver.Called(bargefile, ui)
 	return 0
 }

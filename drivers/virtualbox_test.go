@@ -55,10 +55,10 @@ func TestDepsReturnsExpectedSlice(t *testing.T) {
 	}
 }
 
-/////////////////////////////////
-// Tests for VirtualBox.Start. //
-/////////////////////////////////
-func TestStartExecutesExpectedOSCall(t *testing.T) {
+//////////////////////////////
+// Tests for VirtualBox.Up. //
+//////////////////////////////
+func TestUpExecutesExpectedOSCall(t *testing.T) {
 	config, ui, vb, cmdMock, cleanup := setUp()
 	defer cleanup()
 	expectedArgs := []string{
@@ -69,7 +69,7 @@ func TestStartExecutesExpectedOSCall(t *testing.T) {
 	}
 	cmdMock.On("Run").Return(nil)
 
-	output := vb.Start(config, ui)
+	output := vb.Up(config, ui)
 
 	if output != 0 {
 		t.Errorf("Expected return code of `%d`, got `%d`.", 0, output)
@@ -85,13 +85,13 @@ func TestStartExecutesExpectedOSCall(t *testing.T) {
 	}
 }
 
-func TestStartReturns1WithErrDuringOSCall(t *testing.T) {
+func TestUpReturns1WithErrDuringOSCall(t *testing.T) {
 	config, ui, vb, cmdMock, cleanup := setUp()
 	defer cleanup()
 	uiError := "Testing error handling."
 	cmdMock.On("Run").Return(errors.New(uiError))
 
-	output := vb.Start(config, ui)
+	output := vb.Up(config, ui)
 
 	if output != 1 {
 		t.Errorf("Expected return code of `%d`, got `%d`.", 1, output)
@@ -104,22 +104,22 @@ func TestStartReturns1WithErrDuringOSCall(t *testing.T) {
 	}
 }
 
-////////////////////////////////
-// Tests for VirtualBox.Stop. //
-////////////////////////////////
-func TestStop(t *testing.T) {
+///////////////////////////////////
+// Tests for VirtualBox.Destroy. //
+///////////////////////////////////
+func TestDestroy(t *testing.T) {
 	config, ui, vb, _, cleanup := setUp()
 	defer cleanup()
 
-	vb.Stop(config, ui)
+	vb.Destroy(config, ui)
 }
 
 ///////////////////////////////////
-// Tests for VirtualBox.Restart. //
+// Tests for VirtualBox.Rebuild. //
 ///////////////////////////////////
-func TestRestart(t *testing.T) {
+func TestRebuild(t *testing.T) {
 	config, ui, vb, _, cleanup := setUp()
 	defer cleanup()
 
-	vb.Restart(config, ui)
+	vb.Rebuild(config, ui)
 }

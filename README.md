@@ -28,7 +28,7 @@ Commands:
     dev rebuild  Rebuild the docker machine specified in the working directory's
                  Bargefile.
 ```
-`--help` followed by a subcommand will display the help text for that subcommand.
+`--help` followed by a sub-command will display the help text for that sub-command.
 
 ### bargefile
 The `Bargefile` is a configuration file written in [HCL](https://github.com/hashicorp/hcl#syntax), with the following structure:

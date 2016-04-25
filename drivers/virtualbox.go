@@ -20,8 +20,8 @@ func (vb *VirtualBox) Deps() []*core.Dep {
 	}
 }
 
-// Start a docker machine according to the Bargefile specs.
-func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) int {
+// Up spin up a docker machine according to the Bargefile specs.
+func (vb *VirtualBox) Up(bargefile *core.Bargefile, ui cli.Ui) int {
 	// Build up the command to execute.
 	uiWriter := &cli.UiWriter{Ui: ui}
 	cmd := exec.Command(
@@ -45,12 +45,12 @@ func (vb *VirtualBox) Start(bargefile *core.Bargefile, ui cli.Ui) int {
 	return 0
 }
 
-// Stop the docker machine.
-func (vb *VirtualBox) Stop(bargefile *core.Bargefile, ui cli.Ui) int {
+// Destroy the docker machine.
+func (vb *VirtualBox) Destroy(bargefile *core.Bargefile, ui cli.Ui) int {
 	return 0
 }
 
-// Restart the docker machine.
-func (vb *VirtualBox) Restart(bargefile *core.Bargefile, ui cli.Ui) int {
+// Rebuild the docker machine.
+func (vb *VirtualBox) Rebuild(bargefile *core.Bargefile, ui cli.Ui) int {
 	return 0
 }

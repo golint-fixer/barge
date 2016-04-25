@@ -74,7 +74,7 @@ func TestRunReturns0WithSuccess(t *testing.T) {
 	registryCleanup := patchRegistry()
 	defer registryCleanup()
 	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
-	mockedDriver.On("Start", config, ui).Return(0)
+	mockedDriver.On("Up", config, ui).Return(0)
 
 	output := cmd.Run([]string{})
 
