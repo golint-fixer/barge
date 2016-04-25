@@ -15,7 +15,7 @@ type UpCommand struct {
 
 // Help text for the `dev` command.
 func (cmd *UpCommand) Help() string {
-	return "Help text for `dev` command."
+	return "Spin up a docker machine according to the Bargefile's development section."
 }
 
 // Run - the idea for this command is that it will provision a docker-machine for
@@ -41,7 +41,7 @@ func (cmd *UpCommand) Run(args []string) int {
 
 // Synopsis of the `dev` command.
 func (cmd *UpCommand) Synopsis() string {
-	return "Synopsis of `dev` command."
+	return "Spin up a docker machine."
 }
 
 func selectDriver(config *core.Bargefile, ui cli.Ui) core.Driver {

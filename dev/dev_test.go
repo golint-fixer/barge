@@ -97,7 +97,7 @@ func TestRunReturns0WithSuccess(t *testing.T) {
 /////////////////////
 func TestHelpReturnsExpectedText(t *testing.T) {
 	cmd := &UpCommand{&cli.MockUi{}}
-	expected := "Help text for `dev` command."
+	expected := "Spin up a docker machine according to the Bargefile's development section."
 
 	output := cmd.Help()
 
@@ -111,7 +111,7 @@ func TestHelpReturnsExpectedText(t *testing.T) {
 /////////////////////////
 func TestSynopsisReturnsExpectedText(t *testing.T) {
 	cmd := &UpCommand{&cli.MockUi{}}
-	expected := "Synopsis of `dev` command."
+	expected := "Spin up a docker machine."
 
 	output := cmd.Synopsis()
 
