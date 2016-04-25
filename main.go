@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/mitchellh/cli"
-
 	"github.com/thedodd/barge/dev"
 )
 

@@ -12,9 +12,9 @@ import (
 // Bargefile fixtures. //
 /////////////////////////
 var (
-	DevelopmentBargefile     = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
-	DevelopmentInvalidDriver = []byte("development {\ndisk = 5120\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"invalidDriver\"\nram = 1024}")
-	DevelopmentInvalidDisk   = []byte("development {\ndisk = 5119\nmachineName = \"devVM\"\nnetwork = \"bridge\"\ndriver = \"virtualbox\"\nram = 1024}")
+	DevelopmentBargefile     = []byte("development {\ncpus = 1\ndisk = 5120\nmachineName = \"devVM\"\ndriver = \"virtualbox\"\nram = 1024}")
+	DevelopmentInvalidDriver = []byte("development {\ncpus = 1\ndisk = 5120\nmachineName = \"devVM\"\ndriver = \"invalidDriver\"\nram = 1024}")
+	DevelopmentInvalidDisk   = []byte("development {\ncpus = 1\ndisk = 5119\nmachineName = \"devVM\"\ndriver = \"virtualbox\"\nram = 1024}")
 )
 
 ///////////////////////////////

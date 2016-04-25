@@ -124,7 +124,7 @@ func TestGetConfigReturnsExpectedBargefile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error message: %s", err.Error())
 	}
-	if dev.Disk != 5120 || dev.MachineName != "devVM" || dev.Network != "bridge" || dev.Driver != "virtualbox" || dev.RAM != 1024 {
+	if dev.CPUS != 1 || dev.Disk != 5120 || dev.Driver != "virtualbox" || dev.MachineName != "devVM" || dev.RAM != 1024 {
 		t.Errorf("Bargefile.Development not populated with expected values: %+v", bargefile)
 	}
 }

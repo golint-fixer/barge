@@ -13,10 +13,10 @@ import (
 func setUp() (*core.Bargefile, *cli.MockUi, *VirtualBox, *testutils.MockCmd, func()) {
 	bargefile := &core.Bargefile{
 		Development: &core.DevEnvConfig{
+			CPUS:        1,
 			Disk:        5120,
-			MachineName: "test",
-			Network:     "bridge",
 			Driver:      "virtualbox",
+			MachineName: "test",
 			RAM:         1024,
 		},
 	}
