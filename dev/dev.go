@@ -15,7 +15,7 @@ type UpCommand struct {
 
 // Help text for the `dev` command.
 func (cmd *UpCommand) Help() string {
-	return "Help text for `dev` command."
+	return "Spin up a docker machine according to this project's Bargefile."
 }
 
 // Run - the idea for this command is that it will provision a docker-machine for
@@ -29,7 +29,7 @@ func (cmd *UpCommand) Run(args []string) int {
 	}
 
 	// Select the driver to use for development.
-	driver := selectDriver(config, cmd.UI)
+	driver := SelectDriver(config, cmd.UI)
 
 	// TODO(TheDodd): get this logic in line.
 	// Ensure driver's dependencies are installed and ready to rock.
@@ -41,10 +41,11 @@ func (cmd *UpCommand) Run(args []string) int {
 
 // Synopsis of the `dev` command.
 func (cmd *UpCommand) Synopsis() string {
-	return "Synopsis of `dev` command."
+	return "Spin up a docker machine according to this project's Bargefile."
 }
 
-func selectDriver(config *core.Bargefile, ui cli.Ui) core.Driver {
+// SelectDriver will select the docker machine driver according to the given Bargefile config.
+func SelectDriver(config *core.Bargefile, ui cli.Ui) core.Driver {
 	// Validation of allowed drivers is taken core of by the configuration system.
 	// No need to validate here.
 	return registry.Registry[config.Development.Driver]

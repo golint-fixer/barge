@@ -1,4 +1,4 @@
-package dev
+package dev_test
 
 import (
 	"io/ioutil"
@@ -8,15 +8,16 @@ import (
 	"github.com/mitchellh/cli"
 	"github.com/thedodd/barge/common"
 	"github.com/thedodd/barge/core"
+	"github.com/thedodd/barge/dev"
 	"github.com/thedodd/barge/drivers"
 	"github.com/thedodd/barge/registry"
 	"github.com/thedodd/barge/testutils"
 )
 
-func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *UpCommand, ui *cli.MockUi, cb func()) {
-	// Build a *UpCommand instance.
+func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpCommand, ui *cli.MockUi, cb func()) {
+	// Build a *dev.UpCommand instance.
 	ui = &cli.MockUi{}
-	cmd = &UpCommand{ui}
+	cmd = &dev.UpCommand{UI: ui}
 
 	// Create a temporary directory for a test to run.
 	tmpDir, _ = ioutil.TempDir("/tmp", "barge")
@@ -96,8 +97,8 @@ func TestRunReturns0WithSuccess(t *testing.T) {
 // Tests for Help. //
 /////////////////////
 func TestHelpReturnsExpectedText(t *testing.T) {
-	cmd := &UpCommand{&cli.MockUi{}}
-	expected := "Help text for `dev` command."
+	cmd := &dev.UpCommand{UI: &cli.MockUi{}}
+	expected := "Spin up a docker machine according to this project's Bargefile."
 
 	output := cmd.Help()
 
@@ -110,8 +111,8 @@ func TestHelpReturnsExpectedText(t *testing.T) {
 // Tests for Synopsis. //
 /////////////////////////
 func TestSynopsisReturnsExpectedText(t *testing.T) {
-	cmd := &UpCommand{&cli.MockUi{}}
-	expected := "Synopsis of `dev` command."
+	cmd := &dev.UpCommand{UI: &cli.MockUi{}}
+	expected := "Spin up a docker machine according to this project's Bargefile."
 
 	output := cmd.Synopsis()
 
@@ -128,7 +129,7 @@ func TestSelectDriverReturnsExpectedDriver(t *testing.T) {
 	defer cleanup()
 	expectedDriver := registry.Registry[config.Development.Driver]
 
-	driver := selectDriver(config, ui)
+	driver := dev.SelectDriver(config, ui)
 	_, ok := driver.(*drivers.VirtualBox)
 
 	if driver != expectedDriver || !ok {

@@ -29,12 +29,12 @@ func main() {
 
 	// Build command factory and register it with the top-level CLI.
 	commands := map[string]cli.CommandFactory{
-		"dev": func() (cli.Command, error) {
+		"dev up": func() (cli.Command, error) {
 			return &dev.UpCommand{UI: ui}, nil
 		},
-		// "dev destroy": func() (cli.Command, error) {
-		// 	return &dev.DestroyCommand{UI: ui}, nil
-		// },
+		"dev destroy": func() (cli.Command, error) {
+			return &dev.DestroyCommand{UI: ui}, nil
+		},
 	}
 	bargeCLI := &cli.CLI{
 		Args:     os.Args[1:],
