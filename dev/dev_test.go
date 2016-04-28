@@ -14,7 +14,7 @@ import (
 	"github.com/thedodd/barge/testutils"
 )
 
-func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpCommand, ui *cli.MockUi, cb func()) {
+func setupDev(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpCommand, ui *cli.MockUi, cb func()) {
 	// Build a *dev.UpCommand instance.
 	ui = &cli.MockUi{}
 	cmd = &dev.UpCommand{UI: ui}
@@ -38,7 +38,12 @@ func setUp(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpComma
 	}
 }
 
-func patchRegistry() func() {
+//////////////////////
+// Public fixtures. //
+//////////////////////
+
+// PatchRegistry will patch the registry.Registry, and restore it upon callback execution.
+func PatchRegistry() func() {
 	// Patch the registry.
 	origRegistry := registry.Registry
 	newRegistry := make(map[string]core.Driver)
@@ -55,8 +60,8 @@ func patchRegistry() func() {
 ////////////////////
 // Tests for Run. //
 ////////////////////
-func TestRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
-	_, _, cmd, ui, cleanup := setUp(nil)
+func TestDevCommandRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
+	_, _, cmd, ui, cleanup := setupDev(nil)
 	defer cleanup()
 
 	output := cmd.Run([]string{})
@@ -70,9 +75,9 @@ func TestRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
 }
 
 func TestRunReturns0WithSuccess(t *testing.T) {
-	_, config, cmd, ui, cleanup := setUp(testutils.DevelopmentBargefile)
+	_, config, cmd, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
 	defer cleanup()
-	registryCleanup := patchRegistry()
+	registryCleanup := PatchRegistry()
 	defer registryCleanup()
 	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
 	mockedDriver.On("Up", config, ui).Return(0)
@@ -125,7 +130,7 @@ func TestSynopsisReturnsExpectedText(t *testing.T) {
 // Tests for selectDriver. //
 /////////////////////////////
 func TestSelectDriverReturnsExpectedDriver(t *testing.T) {
-	_, config, _, ui, cleanup := setUp(testutils.DevelopmentBargefile)
+	_, config, _, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
 	defer cleanup()
 	expectedDriver := registry.Registry[config.Development.Driver]
 
