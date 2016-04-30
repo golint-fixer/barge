@@ -6,14 +6,14 @@ import (
 	"testing"
 
 	"github.com/mitchellh/cli"
-	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/config"
 	"github.com/thedodd/barge/core"
 	"github.com/thedodd/barge/dev"
 	"github.com/thedodd/barge/registry"
 	"github.com/thedodd/barge/testutils"
 )
 
-func setupDestroy(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.DestroyCommand, ui *cli.MockUi, cb func()) {
+func setupDestroy(data []byte) (tmpDir string, bargefile *core.Bargefile, cmd *dev.DestroyCommand, ui *cli.MockUi, cb func()) {
 	// Build a *dev.UpCommand instance.
 	ui = &cli.MockUi{}
 	cmd = &dev.DestroyCommand{UI: ui}
@@ -26,12 +26,12 @@ func setupDestroy(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.
 	// Write the given Bargefile data.
 	if data != nil {
 		ioutil.WriteFile("Bargefile", data, 0777)
-		config, _ = common.GetConfig(cmd.UI)
+		bargefile, _ = config.GetConfig(cmd.UI)
 	} else {
-		config = &core.Bargefile{Development: &core.DevEnvConfig{}}
+		bargefile = &core.Bargefile{Development: &core.DevEnvConfig{}}
 	}
 
-	return tmpDir, config, cmd, ui, func() {
+	return tmpDir, bargefile, cmd, ui, func() {
 		os.Chdir(originalWD)
 		os.RemoveAll(tmpDir)
 	}
@@ -55,12 +55,12 @@ func TestDestroyCommandRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
 }
 
 func TestDestroyCommandRunReturns0WithSuccess(t *testing.T) {
-	_, config, cmd, ui, cleanup := setupDestroy(testutils.DevelopmentBargefile)
+	_, bargefile, cmd, ui, cleanup := setupDestroy(testutils.DevelopmentBargefile)
 	defer cleanup()
 	registryCleanup := PatchRegistry()
 	defer registryCleanup()
 	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
-	mockedDriver.On("Destroy", config, ui).Return(0)
+	mockedDriver.On("Destroy", bargefile, ui).Return(0)
 
 	output := cmd.Run([]string{})
 

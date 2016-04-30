@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/mitchellh/cli"
-	"github.com/thedodd/barge/common"
+	"github.com/thedodd/barge/config"
 	"github.com/thedodd/barge/core"
 	"github.com/thedodd/barge/dev"
 	"github.com/thedodd/barge/drivers"
@@ -14,7 +14,7 @@ import (
 	"github.com/thedodd/barge/testutils"
 )
 
-func setupDev(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpCommand, ui *cli.MockUi, cb func()) {
+func setupDev(data []byte) (tmpDir string, bargefile *core.Bargefile, cmd *dev.UpCommand, ui *cli.MockUi, cb func()) {
 	// Build a *dev.UpCommand instance.
 	ui = &cli.MockUi{}
 	cmd = &dev.UpCommand{UI: ui}
@@ -27,12 +27,12 @@ func setupDev(data []byte) (tmpDir string, config *core.Bargefile, cmd *dev.UpCo
 	// Write the given Bargefile data.
 	if data != nil {
 		ioutil.WriteFile("Bargefile", data, 0777)
-		config, _ = common.GetConfig(cmd.UI)
+		bargefile, _ = config.GetConfig(cmd.UI)
 	} else {
-		config = &core.Bargefile{Development: &core.DevEnvConfig{}}
+		bargefile = &core.Bargefile{Development: &core.DevEnvConfig{}}
 	}
 
-	return tmpDir, config, cmd, ui, func() {
+	return tmpDir, bargefile, cmd, ui, func() {
 		os.Chdir(originalWD)
 		os.RemoveAll(tmpDir)
 	}
@@ -75,12 +75,12 @@ func TestDevCommandRunHandlesErrorWhereBargefileIsInvalid(t *testing.T) {
 }
 
 func TestRunReturns0WithSuccess(t *testing.T) {
-	_, config, cmd, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
+	_, bargefile, cmd, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
 	defer cleanup()
 	registryCleanup := PatchRegistry()
 	defer registryCleanup()
 	mockedDriver := registry.Registry["virtualbox"].(*testutils.MockDriver)
-	mockedDriver.On("Up", config, ui).Return(0)
+	mockedDriver.On("Up", bargefile, ui).Return(0)
 
 	output := cmd.Run([]string{})
 
@@ -130,11 +130,11 @@ func TestSynopsisReturnsExpectedText(t *testing.T) {
 // Tests for selectDriver. //
 /////////////////////////////
 func TestSelectDriverReturnsExpectedDriver(t *testing.T) {
-	_, config, _, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
+	_, bargefile, _, ui, cleanup := setupDev(testutils.DevelopmentBargefile)
 	defer cleanup()
-	expectedDriver := registry.Registry[config.Development.Driver]
+	expectedDriver := registry.Registry[bargefile.Development.Driver]
 
-	driver := dev.SelectDriver(config, ui)
+	driver := dev.SelectDriver(bargefile, ui)
 	_, ok := driver.(*drivers.VirtualBox)
 
 	if driver != expectedDriver || !ok {

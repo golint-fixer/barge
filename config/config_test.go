@@ -1,4 +1,4 @@
-package common
+package config_test
 
 import (
 	"io/ioutil"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/mitchellh/cli"
+	"github.com/thedodd/barge/config"
 	"github.com/thedodd/barge/testutils"
 )
 
@@ -36,7 +37,7 @@ func TestGetConfigErrsWhereNoBargefileExists(t *testing.T) {
 	_, ui, cleanup := setUp(nil)
 	defer cleanup()
 
-	_, err := GetConfig(ui)
+	_, err := config.GetConfig(ui)
 
 	if err == nil {
 		t.Error("Expected error to be returned.")
@@ -50,7 +51,7 @@ func TestGetConfigErrsWhereBargefileIsMalformedAndFailsUnmarshaling(t *testing.T
 	_, ui, cleanup := setUp([]byte("malformed"))
 	defer cleanup()
 
-	_, err := GetConfig(ui)
+	_, err := config.GetConfig(ui)
 
 	if err.Error() != "Error reading Bargefile." {
 		t.Errorf("Unexpected error message: %s", err.Error())
@@ -67,7 +68,7 @@ func TestGetConfigErrsWhereBargefileUnmarshalContainsBadType(t *testing.T) {
 	_, ui, cleanup := setUp([]byte(`development {ram = "not a valid int"}`))
 	defer cleanup()
 
-	_, err := GetConfig(ui)
+	_, err := config.GetConfig(ui)
 
 	if "Error(s) parsing Bargefile." != err.Error() {
 		t.Errorf("Unexpected error message: %s", err.Error())
@@ -84,7 +85,7 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnProvider(t *testing.T) {
 	_, ui, cleanup := setUp(testutils.DevelopmentInvalidDriver)
 	defer cleanup()
 
-	_, err := GetConfig(ui)
+	_, err := config.GetConfig(ui)
 
 	if "Error(s) validating Bargefile." != err.Error() {
 		t.Errorf("Unexpected error message: %s", err.Error())
@@ -101,7 +102,7 @@ func TestGetConfigErrsWhereBargefileValidationFailsOnStandardField(t *testing.T)
 	_, ui, cleanup := setUp(testutils.DevelopmentInvalidDisk)
 	defer cleanup()
 
-	_, err := GetConfig(ui)
+	_, err := config.GetConfig(ui)
 
 	if "Error(s) validating Bargefile." != err.Error() {
 		t.Errorf("Unexpected error message: %s", err.Error())
@@ -118,7 +119,7 @@ func TestGetConfigReturnsExpectedBargefile(t *testing.T) {
 	_, ui, cleanup := setUp(testutils.DevelopmentBargefile)
 	defer cleanup()
 
-	bargefile, err := GetConfig(ui)
+	bargefile, err := config.GetConfig(ui)
 	dev := bargefile.Development
 
 	if err != nil {
