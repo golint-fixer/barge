@@ -1,4 +1,6 @@
 # Directory ignores.
+*.coverprofile
+coverage.html
 vendor
 
 # File ignores.
